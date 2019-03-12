@@ -1,0 +1,3 @@
+[submodule "loki/vendor/GLFW"]
+	path = loki/vendor/GLFW
+	url = https://github.com/KostadinovM/glfw

@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "../vendor/imgui/imgui.h"
+#include <imgui.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -43,13 +43,12 @@ int main()
 		return -1;
 	}
 
-	//Imgui implementation
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 
 	bool show_demo_window = true;
 	bool show_another_window = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// render loop
 	// -----------
@@ -72,7 +71,7 @@ int main()
 	}
 
 	
-	ImGui::DestroyContext();
+	//ImGui::DestroyContext();
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwTerminate();

@@ -7,8 +7,6 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(loki/vendor/GLFW)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
-
 find_package(OpenGL REQUIRED)
 
 include_directories(loki/vendor/GLFW/include/

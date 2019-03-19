@@ -100,6 +100,7 @@ static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;
 static int          g_AttribLocationPosition = 0, g_AttribLocationUV = 0, g_AttribLocationColor = 0;
 static unsigned int g_VboHandle = 0, g_ElementsHandle = 0;
 
+
 // Functions
 bool    ImGui_ImplOpenGL3_Init(const char* glsl_version)
 {

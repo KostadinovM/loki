@@ -13,5 +13,5 @@ namespace Loki
 		void InputKey();
 		void InputMouse();
 		void InputScroll();
-	}
+	};
 }

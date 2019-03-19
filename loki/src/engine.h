@@ -10,8 +10,8 @@ namespace Loki
 		void Clean();
 		void InitGUI();
 		void NewGUIFrame();
-		void InputKey();
-		void InputMouse();
+		void InputKey(int key, int action);
+		void InputMouse(int button, int action);
 		void InputScroll();
 	};
 }

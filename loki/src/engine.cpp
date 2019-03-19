@@ -15,10 +15,11 @@
 #include "TargetConditionals.h"
 #endif
 #include<glad/glad.h>
+#include<GLFW/glfw3.h>
 
 namespace Loki
 {
-	bool	ImGui_ImplOpenGL3_Init(const char* glsl_version = NULL);
+	bool	ImGui_ImplOpenGL3_Init(GLFWwindow* window, const char * glsl_version = NULL);
 	void	ImGui_ImplOpenGL3_Shutdown();
 	void	ImGui_ImplOpenGL3_NewFrame();
 	void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data);
@@ -33,6 +34,9 @@ namespace Loki
 	static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;
 	static int          g_AttribLocationPosition = 0, g_AttribLocationUV = 0, g_AttribLocationColor = 0;
 	static unsigned int g_VboHandle = 0, g_ElementsHandle = 0;
+	static GLFWwindow*  g_Window = NULL;
+	static double       g_Time = 0.0;
+	static bool         g_MouseJustPressed[3] = { false, false, false };
 
 
 	void Engine::Init()
@@ -47,17 +51,36 @@ namespace Loki
 	void Engine::NewGUIFrame()
 	{
 	}
-	void Engine::InputKey()
+	void Engine::InputKey(int key, int action)
 	{
+		ImGuiIO& io = ImGui::GetIO();
+		if (action == GLFW_PRESS)
+			io.KeysDown[key] = true;
+		if (action == GLFW_RELEASE)
+			io.KeysDown[key] = false;
+
+		// Modifiers are not reliable across systems
+		io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+		io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 	}
-	void Engine::InputMouse()
+
+	void Engine::InputMouse(int button, int action)
 	{
+		if (action == GLFW_PRESS && button >= 0)
+			g_MouseJustPressed[button] = true;
 	}
+
 	void Engine::InputScroll()
 	{
 	}
-	bool ImGui_ImplOpenGL3_Init(const char * glsl_version)
+
+	bool ImGui_ImplOpenGL3_Init(GLFWwindow* window, const char * glsl_version)
 	{
+		g_Window = window;
+		g_Time = 0.0;
+
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendRendererName = "imgui_impl_opengl3";
 
@@ -73,16 +96,65 @@ namespace Loki
 		strcpy(g_GlslVersionString, glsl_version);
 		strcat(g_GlslVersionString, "\n");
 
+		// Setup back-end capabilities flags
+		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
+		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)
+		io.BackendPlatformName = "imgui_impl_glfw";
+
+		// Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
+		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
+		io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
+		io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
+		io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
+		io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
+		io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
+		io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
+		io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
+		io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
+		io.KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
+		io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
+		io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
+		io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
+		io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
+		io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
+		io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
+		io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
+		io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
+		io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
+		io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
+		io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
+
 		return true;
 	}
+
 	void ImGui_ImplOpenGL3_Shutdown()
 	{
 		ImGui_ImplOpenGL3_DestroyDeviceObjects();
+		ImGui::DestroyContext();
 	}
+
 	void ImGui_ImplOpenGL3_NewFrame()
 	{
 		if (!g_FontTexture)
 			ImGui_ImplOpenGL3_CreateDeviceObjects();
+
+		ImGuiIO& io = ImGui::GetIO();
+		IM_ASSERT(io.Fonts->IsBuilt() && "Font atlas not built! It is generally built by the renderer back-end. Missing call to renderer _NewFrame() function? e.g. ImGui_ImplOpenGL3_NewFrame().");
+
+		// Setup display size (every frame to accommodate for window resizing)
+		int w, h;
+		int display_w, display_h;
+		glfwGetWindowSize(g_Window, &w, &h);
+		glfwGetFramebufferSize(g_Window, &display_w, &display_h);
+		io.DisplaySize = ImVec2((float)w, (float)h);
+		io.DisplayFramebufferScale = ImVec2(w > 0 ? ((float)display_w / w) : 0, h > 0 ? ((float)display_h / h) : 0);
+
+		// Setup time step
+		double current_time = glfwGetTime();
+		io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f / 60.0f);
+		g_Time = current_time;
+
+		ImGui::NewFrame();
 	}
 
 	// OpenGL3 Render function.
@@ -246,6 +318,7 @@ namespace Loki
 		glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
 		glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 	}
+
 	bool ImGui_ImplOpenGL3_CreateFontsTexture()
 	{
 		// Build texture atlas
@@ -272,6 +345,7 @@ namespace Loki
 
 		return true;
 	}
+
 	void ImGui_ImplOpenGL3_DestroyFontsTexture()
 	{
 		if (g_FontTexture)
@@ -282,6 +356,7 @@ namespace Loki
 			g_FontTexture = 0;
 		}
 	}
+
 	bool ImGui_ImplOpenGL3_CreateDeviceObjects()
 	{
 		// Backup GL state
@@ -453,6 +528,7 @@ namespace Loki
 
 		return true;
 	}
+
 	void ImGui_ImplOpenGL3_DestroyDeviceObjects()
 	{
 		if (g_VboHandle) glDeleteBuffers(1, &g_VboHandle);

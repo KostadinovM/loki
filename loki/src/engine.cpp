@@ -4,7 +4,6 @@
 #endif
 
 #include "imgui.h"
-#include "imgui_impl_opengl3.h"
 #include <stdio.h>
 #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
 #include <stddef.h>     // intptr_t
@@ -16,17 +15,19 @@
 #endif
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
+#include<iostream>
 
 namespace Loki
 {
-	bool	ImGui_ImplOpenGL3_Init(GLFWwindow* window, const char * glsl_version = NULL);
-	void	ImGui_ImplOpenGL3_Shutdown();
-	void	ImGui_ImplOpenGL3_NewFrame();
-	void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data);
-	bool    ImGui_ImplOpenGL3_CreateFontsTexture();
-	void    ImGui_ImplOpenGL3_DestroyFontsTexture();
-	bool    ImGui_ImplOpenGL3_CreateDeviceObjects();
-	void	ImGui_ImplOpenGL3_DestroyDeviceObjects();
+	bool				ImGui_ImplGlfwGL3_Init(GLFWwindow* window, bool instant_callbacks);
+	void				ImGui_ImplGlfwGL3_Shutdown();
+	void				ImGui_ImplGlfwGL3_NewFrame();
+	void				ImGui_ImplGlfwGL3_RenderDrawData(ImDrawData* draw_data);
+	bool				ImGui_ImplGlfwGL3_CreateFontsTexture();
+	void				ImGui_ImplGlfwGL3_DestroyFontsTexture();
+	bool				ImGui_ImplGlfwGL3_CreateDeviceObjects();
+	void				ImGui_ImplGlfwGL3_DestroyDeviceObjects();
+	void				ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c);
 	
 	static char         g_GlslVersionString[32] = "";
 	static GLuint       g_FontTexture = 0;
@@ -37,20 +38,52 @@ namespace Loki
 	static GLFWwindow*  g_Window = NULL;
 	static double       g_Time = 0.0;
 	static bool         g_MouseJustPressed[3] = { false, false, false };
+	static float        g_MouseWheel = 0.0f;
 
 
-	void Engine::Init()
+	void Engine::Init(GLFWwindow* window, GLADloadproc loadProc)
 	{
+		if (!gladLoadGLLoader(loadProc))
+		{
+			std::cout << "Glad initialization failed!" << std::endl;
+		}
+		else
+		{
+			std::cout << "Successful initialization!" << std::endl;
+		}
+		ImGui_ImplGlfwGL3_Init(window, true);
 	}
+
 	void Engine::Clean()
 	{
+		ImGui_ImplGlfwGL3_Shutdown();
 	}
-	void Engine::InitGUI()
-	{
-	}
+
 	void Engine::NewGUIFrame()
 	{
+		ImGui_ImplGlfwGL3_NewFrame();
 	}
+
+	void Engine::RenderGUI()
+	{
+		ImGui::Begin("Loki Engine");
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Checkbox("SSAO", &g_MouseJustPressed[1]);
+		if (ImGui::CollapsingHeader("General Options"))
+		{
+			ImGui::Checkbox("SSAO", &g_MouseJustPressed[1]);
+		}
+		if (ImGui::CollapsingHeader("General Options"))
+		{
+		}
+		if (ImGui::CollapsingHeader("General Options"))
+		{
+		}
+
+		ImGui::End();
+		ImGui::Render();
+	}
+
 	void Engine::InputKey(int key, int action)
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -72,29 +105,19 @@ namespace Loki
 			g_MouseJustPressed[button] = true;
 	}
 
-	void Engine::InputScroll()
+	void Engine::InputScroll(float scrollOffset)
 	{
+		g_MouseWheel += scrollOffset;
 	}
 
-	bool ImGui_ImplOpenGL3_Init(GLFWwindow* window, const char * glsl_version)
+	bool ImGui_ImplGlfwGL3_Init(GLFWwindow* window, bool install_callbacks)
 	{
+		ImGui::CreateContext();
 		g_Window = window;
 		g_Time = 0.0;
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendRendererName = "imgui_impl_opengl3";
-
-		// Store GLSL version string so we can refer to it later in case we recreate shaders. Note: GLSL version is NOT the same as GL version. Leave this to NULL if unsure.
-#ifdef USE_GL_ES3
-		if (glsl_version == NULL)
-			glsl_version = "#version 300 es";
-#else
-		if (glsl_version == NULL)
-			glsl_version = "#version 130";
-#endif
-		IM_ASSERT((int)strlen(glsl_version) + 2 < IM_ARRAYSIZE(g_GlslVersionString));
-		strcpy(g_GlslVersionString, glsl_version);
-		strcat(g_GlslVersionString, "\n");
 
 		// Setup back-end capabilities flags
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
@@ -124,19 +147,26 @@ namespace Loki
 		io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
 		io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 
+		io.RenderDrawListsFn = ImGui_ImplGlfwGL3_RenderDrawData;
+
+		if (install_callbacks)
+		{
+			glfwSetCharCallback(window, ImGui_ImplGlfwGL3_CharCallback);
+		}
+
 		return true;
 	}
 
-	void ImGui_ImplOpenGL3_Shutdown()
+	void ImGui_ImplGlfwGL3_Shutdown()
 	{
-		ImGui_ImplOpenGL3_DestroyDeviceObjects();
+		ImGui_ImplGlfwGL3_DestroyDeviceObjects();
 		ImGui::DestroyContext();
 	}
 
-	void ImGui_ImplOpenGL3_NewFrame()
+	void ImGui_ImplGlfwGL3_NewFrame()
 	{
 		if (!g_FontTexture)
-			ImGui_ImplOpenGL3_CreateDeviceObjects();
+			ImGui_ImplGlfwGL3_CreateDeviceObjects();
 
 		ImGuiIO& io = ImGui::GetIO();
 		IM_ASSERT(io.Fonts->IsBuilt() && "Font atlas not built! It is generally built by the renderer back-end. Missing call to renderer _NewFrame() function? e.g. ImGui_ImplOpenGL3_NewFrame().");
@@ -154,6 +184,35 @@ namespace Loki
 		io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f / 60.0f);
 		g_Time = current_time;
 
+		// Setup inputs
+		// (we already got mouse wheel, keyboard keys & characters from glfw callbacks polled in glfwPollEvents())
+		if (glfwGetWindowAttrib(g_Window, GLFW_FOCUSED))
+		{
+			if (io.WantSetMousePos)
+			{
+				glfwSetCursorPos(g_Window, (double)io.MousePos.x, (double)io.MousePos.y);   // Set mouse position if requested by io.WantMoveMouse flag (used when io.NavMovesTrue is enabled by user and using directional navigation)
+			}
+			else
+			{
+				double mouse_x, mouse_y;
+				glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
+				io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);   // Get mouse position in screen coordinates (set to -1,-1 if no mouse / on another screen, etc.)
+			}
+		}
+		else
+		{
+			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+		}
+
+		for (int i = 0; i < 3; i++)
+		{
+			io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;    // If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
+			g_MouseJustPressed[i] = false;
+		}
+
+		io.MouseWheel = g_MouseWheel;
+		g_MouseWheel = 0.0f;
+
 		ImGui::NewFrame();
 	}
 
@@ -162,7 +221,7 @@ namespace Loki
 	// but you can now call this directly from your main loop)
 	// Note that this implementation is little overcomplicated because we are saving/setting up/restoring
 	// every OpenGL state explicitly, in order to be able to run within any OpenGL engine that doesn't do so.
-	void ImGui_ImplOpenGL3_RenderDrawData(ImDrawData * draw_data)
+	void ImGui_ImplGlfwGL3_RenderDrawData(ImDrawData * draw_data)
 	{
 		// Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
 		int fb_width = (int)(draw_data->DisplaySize.x * draw_data->FramebufferScale.x);
@@ -319,7 +378,7 @@ namespace Loki
 		glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
 	}
 
-	bool ImGui_ImplOpenGL3_CreateFontsTexture()
+	bool ImGui_ImplGlfwGL3_CreateFontsTexture()
 	{
 		// Build texture atlas
 		ImGuiIO& io = ImGui::GetIO();
@@ -346,7 +405,7 @@ namespace Loki
 		return true;
 	}
 
-	void ImGui_ImplOpenGL3_DestroyFontsTexture()
+	void ImGui_ImplGlfwGL3_DestroyFontsTexture()
 	{
 		if (g_FontTexture)
 		{
@@ -357,7 +416,7 @@ namespace Loki
 		}
 	}
 
-	bool ImGui_ImplOpenGL3_CreateDeviceObjects()
+	bool ImGui_ImplGlfwGL3_CreateDeviceObjects()
 	{
 		// Backup GL state
 		GLint last_texture, last_array_buffer, last_vertex_array;
@@ -367,7 +426,7 @@ namespace Loki
 
 		// Parse GLSL version string
 		int glsl_version = 130;
-		sscanf(g_GlslVersionString, "#version %d", &glsl_version);
+		sscanf_s(g_GlslVersionString, "#version %d", &glsl_version);
 
 		const GLchar* vertex_shader_glsl_120 =
 			"uniform mat4 ProjMtx;\n"
@@ -519,7 +578,7 @@ namespace Loki
 		glGenBuffers(1, &g_VboHandle);
 		glGenBuffers(1, &g_ElementsHandle);
 
-		ImGui_ImplOpenGL3_CreateFontsTexture();
+		ImGui_ImplGlfwGL3_CreateFontsTexture();
 
 		// Restore modified GL state
 		glBindTexture(GL_TEXTURE_2D, last_texture);
@@ -529,7 +588,14 @@ namespace Loki
 		return true;
 	}
 
-	void ImGui_ImplOpenGL3_DestroyDeviceObjects()
+	void ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		if (c > 0 && c < 0x10000)
+			io.AddInputCharacter((unsigned short)c);
+	}
+
+	void ImGui_ImplGlfwGL3_DestroyDeviceObjects()
 	{
 		if (g_VboHandle) glDeleteBuffers(1, &g_VboHandle);
 		if (g_ElementsHandle) glDeleteBuffers(1, &g_ElementsHandle);
@@ -546,6 +612,6 @@ namespace Loki
 		if (g_ShaderHandle) glDeleteProgram(g_ShaderHandle);
 		g_ShaderHandle = 0;
 
-		ImGui_ImplOpenGL3_DestroyFontsTexture();
+		ImGui_ImplGlfwGL3_DestroyFontsTexture();
 	}
 }

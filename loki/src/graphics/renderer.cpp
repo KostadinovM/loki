@@ -6,7 +6,7 @@ namespace Loki
 {
 	Renderer::Renderer()
 	{
-
+		
 	}
 
 	Renderer::~Renderer()

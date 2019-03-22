@@ -12,6 +12,7 @@ find_package(OpenGL REQUIRED)
 include_directories(loki/vendor/GLFW/include/
 					loki/vendor/Glad/include/
 					loki/vendor/imgui/
+					loki/vendor/glm
 					)
 
 file(GLOB_RECURSE _source_list loki/src/*.cpp

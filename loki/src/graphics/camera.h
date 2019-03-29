@@ -1,6 +1,6 @@
 namespace Loki
 {
-	namespace graphics
+	namespace Graphics
 	{
 		class Camera
 		{

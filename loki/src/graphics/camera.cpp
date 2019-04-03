@@ -12,10 +12,9 @@ namespace Loki
 		}
 
 		Camera::Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up)
+			: Position(position), Forward(forward), Up(up)
 		{
-			Position = position;
-			Forward = forward;
-			Up = up;
+			UpdateViewMatrix();
 		}
 
 		void Camera::UpdateViewMatrix()

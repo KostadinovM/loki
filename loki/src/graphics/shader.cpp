@@ -1,17 +1,23 @@
 #include "shader.h"
 #include <glad/glad.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 namespace Loki
 {
 	namespace Graphics
 	{
+
 		Shader::Shader()
 		{
 		}
 
 		Shader::Shader(std::string vertexShader, std::string fragmentShader)
 		{
-			load(vertexShader, fragmentShader);
+			std::string vShaderCode = readShaderFile(vertexShader);
+			std::string fShaderCode = readShaderFile(fragmentShader);
+			load(vShaderCode, fShaderCode);
 		}
 
 		void Shader::load(std::string vertexShader, std::string fragmentShader)
@@ -57,6 +63,15 @@ namespace Loki
 		void Shader::setFloat(std::string name, float value)
 		{
 			glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
+		}
+
+		std::string Shader::readShaderFile(std::string& shaderPath)
+		{
+			std::ifstream t(shaderPath);
+			std::stringstream buffer;
+			buffer << t.rdbuf();
+			std::string shaderCode = buffer.str();
+			return shaderCode;
 		}
 	}
 }

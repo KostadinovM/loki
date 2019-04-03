@@ -9,6 +9,7 @@ namespace Loki
 		{
 		private:
 			unsigned int ID;
+			std::string readShaderFile(std::string& shaderPath);
 
 		public:
 			Shader();

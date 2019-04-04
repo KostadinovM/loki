@@ -41,30 +41,26 @@ namespace Loki
 	static float        g_MouseWheel = 0.0f;
 
 
-	void Engine::Init(GLFWwindow* window, GLADloadproc loadProc)
+	void Init(GLFWwindow* window, GLADloadproc loadProc)
 	{
-		if (!gladLoadGLLoader(loadProc))
-		{
-			std::cout << "Glad initialization failed!" << std::endl;
-		}
-		else
-		{
-			std::cout << "Successful initialization!" << std::endl;
-		}
+		//if (!gladLoadGLLoader(loadProc))
+		//{
+		//	std::cout << "Glad initialization failed!" << std::endl;
+		//}
 		ImGui_ImplGlfwGL3_Init(window, true);
 	}
 
-	void Engine::Clean()
+	void Clean()
 	{
 		ImGui_ImplGlfwGL3_Shutdown();
 	}
 
-	void Engine::NewGUIFrame()
+	void NewGUIFrame()
 	{
 		ImGui_ImplGlfwGL3_NewFrame();
 	}
 
-	void Engine::RenderGUI()
+	void RenderGUI()
 	{
 		ImGui::Begin("Loki Engine");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -84,7 +80,7 @@ namespace Loki
 		ImGui::Render();
 	}
 
-	void Engine::InputKey(int key, int action)
+	void InputKey(int key, int action)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		if (action == GLFW_PRESS)
@@ -99,13 +95,13 @@ namespace Loki
 		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 	}
 
-	void Engine::InputMouse(int button, int action)
+	void InputMouse(int button, int action)
 	{
 		if (action == GLFW_PRESS && button >= 0)
 			g_MouseJustPressed[button] = true;
 	}
 
-	void Engine::InputScroll(float scrollOffset)
+	void InputScroll(float scrollOffset)
 	{
 		g_MouseWheel += scrollOffset;
 	}

@@ -12,14 +12,19 @@ find_package(OpenGL REQUIRED)
 include_directories(loki/vendor/GLFW/include/
 					loki/vendor/Glad/include/
 					loki/vendor/imgui/
-					loki/vendor/glm
+					loki/vendor/glm/
+					loki/vendor/stb_image/
 					)
 
 file(GLOB_RECURSE _source_list loki/src/*.cpp
 							   loki/src/*.h
+							   loki/src/*.glsl
+							   loki/src/*.glsl
 							   loki/vendor/imgui/*.cpp
 							   loki/vendor/imgui/*.h
-							   loki/vendor/glad/*.c)
+							   loki/vendor/glad/*.c
+							   loki/vendor/stb_image/*.h
+							   loki/vendor/stb_image/*.cpp)
 							   
 #Organizes the source code of the solution in folders							   
 foreach(_source IN ITEMS ${_source_list})

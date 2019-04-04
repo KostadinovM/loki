@@ -13,10 +13,10 @@ namespace Loki
 		{
 		}
 
-		Shader::Shader(std::string vertexShader, std::string fragmentShader)
+		Shader::Shader(std::string vertexPath, std::string fragmentPath)
 		{
-			std::string vShaderCode = readShaderFile(vertexShader);
-			std::string fShaderCode = readShaderFile(fragmentShader);
+			std::string vShaderCode = readShaderFile(vertexPath);
+			std::string fShaderCode = readShaderFile(fragmentPath);
 			load(vShaderCode, fShaderCode);
 		}
 
@@ -50,27 +50,27 @@ namespace Loki
 			glUseProgram(ID);
 		}
 
-		void Shader::setBool(std::string name, bool value)
+		void Shader::setBool(std::string& name, bool value) const
 		{
 			glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
 		}
 
-		void Shader::setInt(std::string name, int value)
+		void Shader::setInt(const std::string& name, int value) const
 		{
 			glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
 		}
 
-		void Shader::setFloat(std::string name, float value)
+		void Shader::setFloat(std::string& name, float value) const
 		{
 			glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 		}
 
-		std::string Shader::readShaderFile(std::string& shaderPath)
+		std::string Shader::readShaderFile(std::string shaderPath)
 		{
 			std::ifstream t(shaderPath);
 			std::stringstream buffer;
 			buffer << t.rdbuf();
-			std::string shaderCode = buffer.str();
+			std::string& shaderCode = buffer.str();
 			return shaderCode;
 		}
 	}

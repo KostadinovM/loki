@@ -9,6 +9,8 @@
 #include "graphics/texture.h"
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "graphics/camera.h"
+#include "graphics/fly_camera.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -17,11 +19,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
+void processInput(GLFWwindow* window);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+// camera 
+Loki::Graphics::FlyCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
+// timing
+float deltaTime = 0.0f;	// time between current frame and last frame
+float lastFrame = 0.0f;
 
 bool keysPressed[1024];
 bool keysActive[1024];
@@ -52,6 +61,7 @@ int main()
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, cursor_position_callback);
 
 	if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
 	{
@@ -160,6 +170,12 @@ int main()
 		glfwPollEvents();
 		Loki::NewGUIFrame();
 
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		processInput(window);
+
 		// render
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
@@ -174,8 +190,9 @@ int main()
 		// create transformations
 		glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
 		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		projection = glm::perspective(glm::radians(camera.zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		camera.updateView();
+		view = camera.getViewMatrix();
 		// pass transformation matrices to the shader
 		ourShader.setMatrix("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
 		ourShader.setMatrix("view", view);
@@ -214,6 +231,20 @@ int main()
 	return 0;
 }
 
+void processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.InputKey(deltaTime, Loki::Graphics::CAMERA_MOVEMENT::FORWARD);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.InputKey(deltaTime, Loki::Graphics::CAMERA_MOVEMENT::BACKWARD);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.InputKey(deltaTime, Loki::Graphics::CAMERA_MOVEMENT::LEFT);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.InputKey(deltaTime, Loki::Graphics::CAMERA_MOVEMENT::RIGHT);
+}
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
@@ -226,6 +257,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+
 	if (key >= 0 && key < 1024)
 	{
 		if (action == GLFW_PRESS)
@@ -240,8 +272,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 bool firstMouse = true;
-float lastX = 640.0f;
-float lastY = 360.0f;
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
@@ -256,6 +288,8 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 
 	lastX = xpos;
 	lastY = ypos;
+
+	camera.InputMouse(xoffset, yoffset);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -266,4 +300,5 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	Loki::InputScroll(yoffset);
+	camera.InputScroll(yoffset);
 }

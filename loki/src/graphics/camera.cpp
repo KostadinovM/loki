@@ -12,14 +12,20 @@ namespace Loki
 		}
 
 		Camera::Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up)
-			: position(position), forward(forward), up(up)
+			: position(position), forward(forward)
 		{
+			worldUp = up;
 			UpdateViewMatrix();
 		}
 
 		void Camera::UpdateViewMatrix()
 		{
 			view = glm::lookAt(position, position + forward, up);
+		}
+
+		glm::mat4 Camera::getViewMatrix() const
+		{
+			return view;
 		}
 	}
 }

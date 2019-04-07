@@ -1,4 +1,6 @@
 #include "fly_camera.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Loki
 {
@@ -6,12 +8,14 @@ namespace Loki
 	{
 		FlyCamera::FlyCamera(glm::vec3 position, glm::vec3 forward, glm::vec3 up)
 		{
-			this->position = position;
 			this->forward = forward;
-			this->up = up;
+			this->position = position;
+			this->worldUp = up;
+
+			updateView();
 		}
 
-		void FlyCamera::Update()
+		void FlyCamera::updateView()
 		{
 			glm::vec3 forward;
 			forward.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -23,6 +27,11 @@ namespace Loki
 			this->up = glm::normalize(glm::cross(this->right, this->forward));
 
 			UpdateViewMatrix();
+		}
+
+		glm::mat4 FlyCamera::getViewMatrix()
+		{
+			return this->view;
 		}
 
 		void FlyCamera::InputKey(float deltaTime, CAMERA_MOVEMENT direction)
@@ -38,16 +47,15 @@ namespace Loki
 				position += right * velocity;
 		}
 
-		void FlyCamera::InputMouse(float deltaX, float deltaY, GLboolean constrainPitch)
+		void FlyCamera::InputMouse(float xoffset, float yoffset, GLboolean constrainPitch)
 		{
-			float xmovement = deltaX * mouseSensitivity;
-			float ymovement = deltaY * mouseSensitivity;
+			xoffset *= mouseSensitivity;
+			yoffset *= mouseSensitivity;
 
-			yaw += xmovement;
-			pitch += ymovement;
+			yaw += xoffset;
+			pitch += yoffset;
 
-			// Make sure that when pitch is out of bounds, screen doesn't get flipped(checks if the pitch is 
-			// above or bellow 90 degrees(if it is, it would break the lookAt calculation)
+			// Make sure that when pitch is out of bounds, screen doesn't get flipped
 			if (constrainPitch)
 			{
 				if (pitch > 89.0f)
@@ -55,6 +63,9 @@ namespace Loki
 				if (pitch < -89.0f)
 					pitch = -89.0f;
 			}
+
+			// Update Front, Right and Up Vectors using the updated Euler angles
+			updateView();
 		}
 
 		void FlyCamera::InputScroll(float yoffset)
@@ -65,6 +76,6 @@ namespace Loki
 				zoom = 1.0f;
 			if (zoom >= 45.0f)
 				zoom = 45.0f;
-		}
+		}		
 	}
 }

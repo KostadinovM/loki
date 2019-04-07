@@ -51,7 +51,7 @@ namespace Loki
 			glUseProgram(id);
 		}
 
-		void Shader::setBool(std::string& name, bool value) const
+		void Shader::setBool(const std::string& name, bool value) const
 		{
 			glUniform1i(glGetUniformLocation(id, name.c_str()), (int)value);
 		}
@@ -61,10 +61,41 @@ namespace Loki
 			glUniform1i(glGetUniformLocation(id, name.c_str()), value);
 		}
 
-		void Shader::setFloat(std::string& name, float value) const
+		void Shader::setFloat(const std::string& name, float value) const
 		{
 			glUniform1f(glGetUniformLocation(id, name.c_str()), value);
 		}
+
+		void Shader::setVector(const std::string& name, glm::vec2& vec) const
+		{
+			glUniform2fv(glGetUniformLocation(id, name.c_str()), 1, &vec[0]);
+		}
+
+		void Shader::setVector(const std::string& name, glm::vec3& vec) const
+		{
+			glUniform3fv(glGetUniformLocation(id, name.c_str()), 1, &vec[0]);
+		}
+
+		void Shader::setVector(const std::string& name, glm::vec4& vec) const
+		{
+			glUniform4fv(glGetUniformLocation(id, name.c_str()), 1, &vec[0]);
+		}
+
+		void Shader::setMatrix(const std::string& name, glm::mat2& mat) const
+		{
+			glUniformMatrix2fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+		}
+
+		void Shader::setMatrix(const std::string& name, glm::mat3& mat) const
+		{
+			glUniformMatrix3fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+		}
+
+		void Shader::setMatrix(const std::string& name, glm::mat4& mat) const
+		{
+			glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+		}
+
 
 		std::string Shader::readShaderFile(std::string shaderPath)
 		{

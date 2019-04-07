@@ -19,15 +19,15 @@
 
 namespace Loki
 {
-	bool				ImGui_ImplGlfwGL3_Init(GLFWwindow* window, bool instant_callbacks);
-	void				ImGui_ImplGlfwGL3_Shutdown();
-	void				ImGui_ImplGlfwGL3_NewFrame();
-	void				ImGui_ImplGlfwGL3_RenderDrawData(ImDrawData* draw_data);
-	bool				ImGui_ImplGlfwGL3_CreateFontsTexture();
-	void				ImGui_ImplGlfwGL3_DestroyFontsTexture();
-	bool				ImGui_ImplGlfwGL3_CreateDeviceObjects();
-	void				ImGui_ImplGlfwGL3_DestroyDeviceObjects();
-	void				ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c);
+	bool	ImGui_ImplGlfwGL3_Init(GLFWwindow* window, bool instant_callbacks);
+	void	ImGui_ImplGlfwGL3_Shutdown();
+	void	ImGui_ImplGlfwGL3_NewFrame();
+	void	ImGui_ImplGlfwGL3_RenderDrawData(ImDrawData* draw_data);
+	bool	ImGui_ImplGlfwGL3_CreateFontsTexture();
+	void	ImGui_ImplGlfwGL3_DestroyFontsTexture();
+	bool	ImGui_ImplGlfwGL3_CreateDeviceObjects();
+	void	ImGui_ImplGlfwGL3_DestroyDeviceObjects();
+	void	ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c);
 	
 	static char         g_GlslVersionString[32] = "";
 	static GLuint       g_FontTexture = 0;

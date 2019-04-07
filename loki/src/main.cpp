@@ -10,7 +10,7 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "graphics/camera.h"
-#include "graphics/fly_camera.h"
+#include "graphics/free_camera.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -26,7 +26,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera 
-Loki::Graphics::FlyCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Loki::Graphics::FreeCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame

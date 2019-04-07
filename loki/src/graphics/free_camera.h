@@ -16,7 +16,7 @@ namespace Loki
 		};
 
 		//Derived from Camera class - to serve as a free mode camera
-		class FlyCamera : Camera
+		class FreeCamera : Camera
 		{
 		public:
 
@@ -27,7 +27,7 @@ namespace Loki
 			float zoom = 45.0f;
 
 		public:
-			FlyCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
+			FreeCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
 			void updateView();
 			glm::mat4 getViewMatrix();
 			virtual void InputKey(float deltaTime, CAMERA_MOVEMENT direction);

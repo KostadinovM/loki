@@ -1,4 +1,4 @@
-#include "fly_camera.h"
+#include "free_camera.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -6,7 +6,7 @@ namespace Loki
 {
 	namespace Graphics
 	{
-		FlyCamera::FlyCamera(glm::vec3 position, glm::vec3 forward, glm::vec3 up)
+		FreeCamera::FreeCamera(glm::vec3 position, glm::vec3 forward, glm::vec3 up)
 		{
 			this->forward = forward;
 			this->position = position;
@@ -15,7 +15,7 @@ namespace Loki
 			updateView();
 		}
 
-		void FlyCamera::updateView()
+		void FreeCamera::updateView()
 		{
 			glm::vec3 forward;
 			forward.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
@@ -29,12 +29,12 @@ namespace Loki
 			UpdateViewMatrix();
 		}
 
-		glm::mat4 FlyCamera::getViewMatrix()
+		glm::mat4 FreeCamera::getViewMatrix()
 		{
 			return this->view;
 		}
 
-		void FlyCamera::InputKey(float deltaTime, CAMERA_MOVEMENT direction)
+		void FreeCamera::InputKey(float deltaTime, CAMERA_MOVEMENT direction)
 		{
 			float velocity = movementSpeed * deltaTime;
 			if (direction == FORWARD)
@@ -47,7 +47,7 @@ namespace Loki
 				position += right * velocity;
 		}
 
-		void FlyCamera::InputMouse(float xoffset, float yoffset, GLboolean constrainPitch)
+		void FreeCamera::InputMouse(float xoffset, float yoffset, GLboolean constrainPitch)
 		{
 			xoffset *= mouseSensitivity;
 			yoffset *= mouseSensitivity;
@@ -68,7 +68,7 @@ namespace Loki
 			updateView();
 		}
 
-		void FlyCamera::InputScroll(float yoffset)
+		void FreeCamera::InputScroll(float yoffset)
 		{
 			if (zoom >= 1.0f && zoom <= 45.0f)
 				zoom -= yoffset;

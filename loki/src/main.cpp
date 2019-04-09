@@ -151,8 +151,8 @@ int main()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	Loki::Graphics::Texture texture1(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\textures\container.jpg)", GL_TEXTURE_2D, 0, GL_REPEAT, GL_LINEAR);
-	Loki::Graphics::Texture texture2(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\textures\awesome.jpg)", GL_TEXTURE_2D, 1, GL_REPEAT, GL_LINEAR);
+	Loki::Graphics::Texture texture1(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\textures\container.jpg)", GL_TEXTURE_2D, 0, GL_REPEAT, GL_LINEAR);
+	Loki::Graphics::Texture texture2(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\textures\awesome.jpg)", GL_TEXTURE_2D, 1, GL_REPEAT, GL_LINEAR);
 
 	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
 	// -------------------------------------------------------------------------------------------

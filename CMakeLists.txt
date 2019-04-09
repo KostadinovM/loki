@@ -7,6 +7,11 @@ set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(loki/vendor/GLFW)
 
+option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
+option(ASSIMP_BUILD_SAMPLES OFF)
+option(ASSIMP_BUILD_TESTS OFF)
+add_subdirectory(loki/vendor/assimp)
+
 find_package(OpenGL REQUIRED)
 
 include_directories(loki/vendor/GLFW/include/
@@ -14,6 +19,7 @@ include_directories(loki/vendor/GLFW/include/
 					loki/vendor/imgui/
 					loki/vendor/glm/
 					loki/vendor/stb_image/
+					loki/vendor/assimp/include/
 					)
 
 file(GLOB_RECURSE _source_list loki/src/*.cpp
@@ -36,7 +42,7 @@ endforeach()
 
 add_executable(${PROJECT_NAME} ${_source_list})
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY})
-target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})						
+target_link_libraries(${PROJECT_NAME} assimp glfw ${GLFW_LIBRARIES})						
 						
 
 

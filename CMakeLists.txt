@@ -20,6 +20,8 @@ include_directories(loki/vendor/GLFW/include/
 					loki/vendor/glm/
 					loki/vendor/stb_image/
 					loki/vendor/assimp/include/
+					loki/src/
+					loki/src/graphics/
 					)
 
 file(GLOB_RECURSE _source_list loki/src/*.cpp

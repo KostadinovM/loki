@@ -23,7 +23,7 @@ namespace Loki
 			forward.z = sin(glm::radians(yaw) * cos(glm::radians(pitch)));
 			this->forward = glm::normalize(forward);
 
-			this->right = glm::normalize(glm::cross(this->forward, this->up));
+			this->right = glm::normalize(glm::cross(this->forward, this->worldUp));
 			this->up = glm::normalize(glm::cross(this->right, this->forward));
 
 			UpdateViewMatrix();

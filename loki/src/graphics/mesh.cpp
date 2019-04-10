@@ -24,7 +24,7 @@ namespace Loki
 
 		void Mesh::draw(Shader shader)
 		{
-
+			setupTexture();
 			glBindVertexArray(VAO);
 			glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 			glBindVertexArray(0);
@@ -52,6 +52,14 @@ namespace Loki
 
 			glBindVertexArray(0);
 
+		}
+
+		void Mesh::setupTexture()
+		{
+			for (unsigned int i = 0; i < textures.size(); i++)
+			{
+				textures[i].bind();
+			}
 		}
 	}
 }

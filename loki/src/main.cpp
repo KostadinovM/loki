@@ -162,14 +162,14 @@ int main()
 	// or set it via the texture class
 	ourShader.setInt("texture2", texture2.getTexUnit());
 
-	Loki::Init(window, GLADloadproc(glfwGetProcAddress));
+	Loki::init(window, GLADloadproc(glfwGetProcAddress));
 
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
-		Loki::NewGUIFrame();
+		Loki::newGUIFrame();
 
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -213,13 +213,13 @@ int main()
 		}
 
 
-		Loki::RenderGUI();
+		Loki::renderGUI();
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 	}
 
-	Loki::Clean();
+	Loki::clean();
 
 	// optional: de-allocate all resources once they've outlived their purpose:
 // ------------------------------------------------------------------------
@@ -269,7 +269,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			keysActive[key] = false;
 		}
 	}
-	Loki::InputKey(key, action);
+	Loki::inputKey(key, action);
 }
 
 bool firstMouse = true;
@@ -295,11 +295,11 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	Loki::InputMouse(button, action);
+	Loki::inputMouse(button, action);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	Loki::InputScroll(yoffset);
+	Loki::inputScroll(yoffset);
 	camera.InputScroll(yoffset);
 }

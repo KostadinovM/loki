@@ -1,3 +1,4 @@
+#pragma once
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <vector>
@@ -35,6 +36,7 @@ namespace Loki
 
 		private:
 			void setupMesh();
+			void setupTexture();
 		};
 
 

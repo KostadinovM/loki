@@ -1,0 +1,7 @@
+namespace Loki
+{
+	namespace Graphics
+	{
+
+	}
+}

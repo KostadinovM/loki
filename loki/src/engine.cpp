@@ -41,7 +41,7 @@ namespace Loki
 	static float        g_MouseWheel = 0.0f;
 
 
-	void Init(GLFWwindow* window, GLADloadproc loadProc)
+	void init(GLFWwindow* window, GLADloadproc loadProc)
 	{
 		//if (!gladLoadGLLoader(loadProc))
 		//{
@@ -50,17 +50,17 @@ namespace Loki
 		ImGui_ImplGlfwGL3_Init(window, true);
 	}
 
-	void Clean()
+	void clean()
 	{
 		ImGui_ImplGlfwGL3_Shutdown();
 	}
 
-	void NewGUIFrame()
+	void newGUIFrame()
 	{
 		ImGui_ImplGlfwGL3_NewFrame();
 	}
 
-	void RenderGUI()
+	void renderGUI()
 	{
 		ImGui::Begin("Loki Engine");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -80,7 +80,7 @@ namespace Loki
 		ImGui::Render();
 	}
 
-	void InputKey(int key, int action)
+	void inputKey(int key, int action)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		if (action == GLFW_PRESS)
@@ -95,13 +95,13 @@ namespace Loki
 		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
 	}
 
-	void InputMouse(int button, int action)
+	void inputMouse(int button, int action)
 	{
 		if (action == GLFW_PRESS && button >= 0)
 			g_MouseJustPressed[button] = true;
 	}
 
-	void InputScroll(float scrollOffset)
+	void inputScroll(float scrollOffset)
 	{
 		g_MouseWheel += scrollOffset;
 	}

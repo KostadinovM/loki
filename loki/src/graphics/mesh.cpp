@@ -6,14 +6,12 @@ namespace Loki
 		Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) : 
 			vertices(vertices), indices(indices)
 		{
-
 			setupMesh();
 		}
 
 		Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) :
 			vertices(vertices), indices(indices), textures(textures)
 		{
-
 			setupMesh();
 		}
 
@@ -56,9 +54,12 @@ namespace Loki
 
 		void Mesh::setupTexture()
 		{
-			for (unsigned int i = 0; i < textures.size(); i++)
+			if (textures.size() > 0)
 			{
-				textures[i].bind();
+				for (unsigned int i = 0; i < textures.size(); i++)
+				{
+					textures[i].bind();
+				}
 			}
 		}
 	}

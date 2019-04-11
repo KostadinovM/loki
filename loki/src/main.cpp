@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <imgui.h>
-#include "engine.h"
+#include "loki.h"
 #include "graphics/shader.h"
 #include <glm/vec3.hpp>
 #include <stb_image.h>

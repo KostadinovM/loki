@@ -74,8 +74,8 @@ int main()
 
 	// build and compile our shader program
 	// ------------------------------------
-	Loki::Graphics::Shader ourShader(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\src\graphics\shaders\transformations_vs.glsl)",
-	                                 R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\src\graphics\shaders\transformations_fs.glsl)");
+	Loki::Graphics::Shader ourShader(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\shaders\transformations_vs.glsl)",
+	                                 R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\shaders\transformations_fs.glsl)");
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------

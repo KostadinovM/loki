@@ -1,4 +1,11 @@
 #include "mesh_loader.h"
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <map>
+#include <vector>
+
 namespace Loki
 {
 	namespace Graphics
@@ -9,6 +16,7 @@ namespace Loki
 
 		MeshLoader::~MeshLoader()
 		{
+
 		}
 
 		void MeshLoader::loadMesh(std::string path)
@@ -92,7 +100,13 @@ namespace Loki
 			//process material
 			if (mesh->mMaterialIndex >= 0)
 			{
-
+				aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+				std::vector<Texture> diffuseMaps = loadMaterialTextures(material,
+					aiTextureType_DIFFUSE, "texture_diffuse");
+				textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+				std::vector<Texture> specularMaps = loadMaterialTextures(material,
+					aiTextureType_SPECULAR, "texture_specular");
+				textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 			}
 
 			return Mesh(vertices, indices, textures);
@@ -100,9 +114,26 @@ namespace Loki
 
 		std::vector<Texture> MeshLoader::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 		{
+			texUnit = 0;
 			std::vector<Texture> textures;
-			
+			for (size_t i = 0; i < mat->GetTextureCount(type); i++)
+			{
+				aiString str;
+				mat->GetTexture(type, i, &str);
+				Texture texture(str.C_Str(), GL_TEXTURE_2D, texUnit, GL_REPEAT, GL_LINEAR);
+				textures.push_back(texture);
+				texUnit++;
+			}
 			return textures;
+		}
+
+		GLuint loadTexture(std::string path, const std::string directory)
+		{
+			std::string filename = std::string(path);
+			filename = directory + "/" + filename; 
+			GLuint textureID;
+			Texture texture(path, GL_TEXTURE_2D, 0, GL_REPEAT, GL_LINEAR);
+			return texture.getID();
 		}
 	}
 }

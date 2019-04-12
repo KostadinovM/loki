@@ -23,6 +23,7 @@ namespace Loki
 			std::vector<Mesh> meshStore;
 			std::vector<Texture> textureStore;
 			std::string directory;
+			GLuint texUnit;
 
 			void processNode(aiNode* node, const aiScene* scene);
 			Mesh processMesh(aiMesh* mesh, const aiScene* scene);

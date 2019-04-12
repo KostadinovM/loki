@@ -14,6 +14,11 @@ namespace Loki
 		{
 		}
 
+		MeshLoader::MeshLoader(std::string path)
+		{
+			loadMesh(path);
+		}
+
 		MeshLoader::~MeshLoader()
 		{
 
@@ -36,6 +41,10 @@ namespace Loki
 
 		void MeshLoader::draw(Shader shader)
 		{
+			for (size_t i = 0; i < meshStore.size(); i++)
+			{
+				meshStore[i].draw(shader);
+			}
 		}
 
 		void MeshLoader::processNode(aiNode* node, const aiScene* scene)

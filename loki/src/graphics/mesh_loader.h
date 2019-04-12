@@ -15,6 +15,7 @@ namespace Loki
 		{
 		public:
 			MeshLoader();
+			MeshLoader(std::string path);
 			~MeshLoader();
 			void loadMesh(std::string path);
 			void draw(Shader shader);

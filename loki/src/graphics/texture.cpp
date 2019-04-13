@@ -57,17 +57,17 @@ namespace Loki
 			glBindTexture(type, 0);
 		}
 
-		GLuint Texture::getID() const
+		GLuint Texture::getID()
 		{
 			return id;
 		}
 
-		GLenum Texture::getType() const
+		GLenum Texture::getType()
 		{
 			return type;
 		}
 
-		GLint Texture::getTexUnit() const
+		GLint Texture::getTexUnit()
 		{
 			return textureUnit;
 		}

@@ -24,9 +24,9 @@ namespace Loki
 			void loadTexture(std::string texPath, GLenum texType, GLuint texWrapping, GLint texFiltering);
 			void bind();
 			void unbind();
-			GLuint getID() const;
-			GLenum getType() const;
-			GLint getTexUnit() const;
+			GLuint getID();
+			GLenum getType();
+			GLint getTexUnit();
 		};
 	}
 }

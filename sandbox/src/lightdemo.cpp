@@ -33,6 +33,8 @@ float lastFrame = 0.0f;
 
 bool keysPressed[1024];
 bool keysActive[1024];
+// lighting
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
@@ -73,8 +75,11 @@ int main()
 
 	// build and compile our shader program
 	// ------------------------------------
-	Loki::Graphics::Shader ourShader(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\shaders\transformations_vs.glsl)",
-		R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\shaders\transformations_fs.glsl)");
+	Loki::Graphics::Shader lightingShader(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\shaders\light_vs.glsl)",
+		R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\shaders\light_fs.glsl)");
+
+	Loki::Graphics::Shader lampShader(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\shaders\lamp_vs.glsl)",
+		R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\shaders\lamp_fs.glsl)");
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
@@ -121,45 +126,30 @@ int main()
 		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
-	// world space positions of our cubes
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
-	unsigned int VBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
 
-	glBindVertexArray(VAO);
+	unsigned int VBO, cubeVAO;
+	glGenVertexArrays(1, &cubeVAO);
+	glGenBuffers(1, &VBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	glBindVertexArray(cubeVAO);
+
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	// texture coord attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 
-	Loki::Graphics::Texture texture1(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\textures\container.jpg)", GL_TEXTURE_2D, 0, GL_REPEAT, GL_LINEAR);
-	Loki::Graphics::Texture texture2(R"(C:\Users\mkost\Desktop\Engine\engines\loki\loki\resources\textures\awesome.jpg)", GL_TEXTURE_2D, 1, GL_REPEAT, GL_LINEAR);
+	// second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
 
-	// tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
-	// -------------------------------------------------------------------------------------------
-	ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
-	// either set it manually like so:
-	ourShader.setInt("texture1", texture1.getTexUnit());
-	// or set it via the texture class
-	ourShader.setInt("texture2", texture2.getTexUnit());
+	// we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
 	Loki::init(window, GLADloadproc(glfwGetProcAddress));
 
@@ -180,36 +170,39 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
-		 // bind textures on corresponding texture units
-		texture1.bind();
-		texture2.bind();
-
-		// activate shader
-		ourShader.use();
+		
+		lightingShader.use();
+		lightingShader.setVector("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		lightingShader.setVector("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 
 		// create transformations
-		glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		glm::mat4 projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(camera.zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 view = camera.getViewMatrix();
+
+		lightingShader.setMatrix("view", view);
+		lightingShader.setMatrix("projection", projection);
+
 		camera.updateView();
-		view = camera.getViewMatrix();
 		// pass transformation matrices to the shader
-		ourShader.setMatrix("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
-		ourShader.setMatrix("view", view);
+		lightingShader.setMatrix("projection", projection); // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
+		lightingShader.setMatrix("view", view);
+		
+		glm::mat4 model = glm::mat4(1.0);
+		lightingShader.setMatrix("model", model);
+		
+		glBindVertexArray(cubeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		// render boxes
-		glBindVertexArray(VAO);
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			// calculate the model matrix for each object and pass it to shader before drawing
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			ourShader.setMatrix("model", model);
+		lampShader.use();
+		lampShader.setMatrix("projection", projection);
+		lampShader.setMatrix("view", view);
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+		lampShader.setMatrix("model", model);
 
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 		Loki::renderGUI();
@@ -222,7 +215,8 @@ int main()
 
 	// optional: de-allocate all resources once they've outlived their purpose:
 // ------------------------------------------------------------------------
-	glDeleteVertexArrays(1, &VAO);
+	glDeleteVertexArrays(1, &cubeVAO);
+	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteBuffers(1, &VBO);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.

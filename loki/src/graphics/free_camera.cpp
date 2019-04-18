@@ -34,6 +34,11 @@ namespace Loki
 			return this->view;
 		}
 
+		glm::vec3 FreeCamera::getCameraPos()
+		{
+			return this->position;
+		}
+
 		void FreeCamera::InputKey(float deltaTime, CAMERA_MOVEMENT direction)
 		{
 			float velocity = movementSpeed * deltaTime;

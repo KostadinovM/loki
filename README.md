@@ -14,4 +14,4 @@
 * Build the submodules by running the **GenerateProjects.bat** batch script in the repo
 
 ## Showcase
-// TODO \\
+( TO-DO )

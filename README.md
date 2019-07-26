@@ -12,3 +12,6 @@
 **Before you build** you must pull and build the submodules:
 * Pull all submodules by using **git submodule update --init --recursive**
 * Build the submodules by running the **GenerateProjects.bat** batch script in the repo
+
+## Showcase
+// TODO \\

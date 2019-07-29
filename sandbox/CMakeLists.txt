@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.0)
 project(sandbox)
 
 add_executable(${PROJECT_NAME}  src/main.cpp
-								src/lightdemo.cpp)
+								src/lightdemo.cpp
+								src/imguidemo.cpp
+								src/assimpdemo.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/loki/vendor/GLFW/include/
 					${CMAKE_SOURCE_DIR}/loki/vendor/Glad/include/

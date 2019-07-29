@@ -16,5 +16,5 @@ namespace Loki
 		void inputKey(int key, int action);
 		void inputMouse(int button, int action);
 		void inputScroll(float scrollOffset);
-	
+		void rendering();
 }

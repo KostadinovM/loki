@@ -37,6 +37,8 @@ namespace Loki
 			void setMatrix(const std::string& name, glm::mat3& mat) const;
 			void setMatrix(const std::string& name, glm::mat4& mat) const;
 
+			unsigned int getID();
+
 		};
 	}
 }

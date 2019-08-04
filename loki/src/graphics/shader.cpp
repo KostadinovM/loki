@@ -96,6 +96,13 @@ namespace Loki
 			glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 		}
 
+		unsigned int Shader::getID()
+		{
+			return id;
+		}
+
+
+
 
 		std::string Shader::readShaderFile(std::string shaderPath)
 		{

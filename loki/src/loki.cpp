@@ -54,7 +54,6 @@ namespace Loki
 	static GLFWcharfun          g_PrevUserCallbackChar = NULL;
 
 
-
 	void init(GLFWwindow* window, GLADloadproc loadProc)
 	{
 		ImGui_ImplGlfwGL3_Init(window, true);

@@ -15,6 +15,8 @@ namespace Loki
 			glm::vec3 position;
 			glm::vec3 normal;
 			glm::vec2 uv;
+			glm::vec3 Tangent;
+			glm::vec3 Bitangent;
 		};
 
 		class Mesh

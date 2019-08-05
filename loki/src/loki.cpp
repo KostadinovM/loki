@@ -29,12 +29,20 @@ namespace Loki
 	void ImGui_ImplGlfwGL3_DestroyFontsTexture();
 	bool ImGui_ImplGlfwGL3_CreateDeviceObjects();
 	void ImGui_ImplGlfwGL3_DestroyDeviceObjects();
+	void ImGui_ImplGlfwGL3_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object);
 	void ImGui_ImplGlfwGL3_CharCallback(GLFWwindow*, unsigned int c);
-	void ImGui_ImplOpenGL3_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object);
+	void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+	void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+	void ImGui_ImplGlfwGL3_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
-	static GLFWwindow* g_Window = NULL;
+	static void ImGui_ImplGlfwGL3_UpdateMousePosAndButtons();
+	static void ImGui_ImplGlfwGL3_UpdateMouseCursor();
+
+
+	static GLFWwindow*	g_Window = NULL;
 	static double       g_Time = 0.0;
-	static bool         g_MouseJustPressed[3] = { false, false, false };
+	static bool         g_MouseJustPressed[5] = { false, false, false, false, false };
+	static GLFWcursor*	g_MouseCursors[ImGuiMouseCursor_COUNT] = { 0 };
 	static float        g_MouseWheel = 0.0f;
 
 	// OpenGL Data
@@ -44,8 +52,6 @@ namespace Loki
 	static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;                                // Uniforms location
 	static int          g_AttribLocationVtxPos = 0, g_AttribLocationVtxUV = 0, g_AttribLocationVtxColor = 0; // Vertex attributes location
 	static unsigned int g_VboHandle = 0, g_ElementsHandle = 0;
-
-	static GLFWcursor* g_MouseCursors[ImGuiMouseCursor_COUNT] = { 0 };
 
 	// Chain GLFW callbacks: our callbacks will call the user's previously installed callbacks, if any.
 	static GLFWmousebuttonfun   g_PrevUserCallbackMousebutton = NULL;
@@ -73,16 +79,16 @@ namespace Loki
 	{
 		ImGui::Begin("Loki Engine");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Checkbox("SSAO", &g_MouseJustPressed[1]);
 		if (ImGui::CollapsingHeader("General Options"))
 		{
+			ImGui::Checkbox("Stencil Testing", &g_MouseJustPressed[1]);
+			ImGui::Checkbox("Blending", &g_MouseJustPressed[1]);
+		}
+		if (ImGui::CollapsingHeader("Advanced Options"))
+		{
+			ImGui::Checkbox("Bloom", &g_MouseJustPressed[1]);
+			ImGui::Checkbox("Anti-aliasing", &g_MouseJustPressed[1]);
 			ImGui::Checkbox("SSAO", &g_MouseJustPressed[1]);
-		}
-		if (ImGui::CollapsingHeader("General Options"))
-		{
-		}
-		if (ImGui::CollapsingHeader("General Options"))
-		{
 		}
 
 		ImGui::End();
@@ -190,6 +196,9 @@ namespace Loki
 		g_PrevUserCallbackChar = NULL;
 		if (install_callbacks)
 		{
+			g_PrevUserCallbackMousebutton = glfwSetMouseButtonCallback(window, ImGui_ImplGlfwGL3_MouseButtonCallback);
+			g_PrevUserCallbackScroll = glfwSetScrollCallback(window, ImGui_ImplGlfwGL3_ScrollCallback);
+			g_PrevUserCallbackKey = glfwSetKeyCallback(window, ImGui_ImplGlfwGL3_KeyCallback);
 			g_PrevUserCallbackChar = glfwSetCharCallback(window, ImGui_ImplGlfwGL3_CharCallback);
 		}
 
@@ -228,6 +237,9 @@ namespace Loki
 		double current_time = glfwGetTime();
 		io.DeltaTime = g_Time > 0.0 ? (float)(current_time - g_Time) : (float)(1.0f / 60.0f);
 		g_Time = current_time;
+
+		ImGui_ImplGlfwGL3_UpdateMousePosAndButtons();
+		ImGui_ImplGlfwGL3_UpdateMouseCursor();
 
 		ImGui::NewFrame();
 	}
@@ -281,7 +293,7 @@ namespace Loki
 #ifndef IMGUI_IMPL_OPENGL_ES2
 		glGenVertexArrays(1, &vertex_array_object);
 #endif
-		ImGui_ImplOpenGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
+		ImGui_ImplGlfwGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
 
 		// Will project scissor/clipping rectangles into framebuffer space
 		ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
@@ -305,7 +317,7 @@ namespace Loki
 					// User callback, registered via ImDrawList::AddCallback()
 					// (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
 					if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
-						ImGui_ImplOpenGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
+						ImGui_ImplGlfwGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
 					else
 						pcmd->UserCallback(cmd_list, pcmd);
 				}
@@ -404,7 +416,7 @@ namespace Loki
 		}
 	}
 
-	static void ImGui_ImplOpenGL3_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object)
+	static void ImGui_ImplGlfwGL3_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height, GLuint vertex_array_object)
 	{
 		// Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, polygon fill
 		glEnable(GL_BLEND);
@@ -660,5 +672,97 @@ namespace Loki
 		ImGuiIO& io = ImGui::GetIO();
 		if (c > 0 && c < 0x10000)
 			io.AddInputCharacter((unsigned short)c);
+	}
+
+	void ImGui_ImplGlfwGL3_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+	{
+		if (g_PrevUserCallbackMousebutton != NULL)
+			g_PrevUserCallbackMousebutton(window, button, action, mods);
+
+		if (action == GLFW_PRESS && button >= 0 && button < IM_ARRAYSIZE(g_MouseJustPressed))
+			g_MouseJustPressed[button] = true;
+	}
+
+	void ImGui_ImplGlfwGL3_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+	{
+		if (g_PrevUserCallbackScroll != NULL)
+			g_PrevUserCallbackScroll(window, xoffset, yoffset);
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseWheelH += (float)xoffset;
+		io.MouseWheel += (float)yoffset;
+	}
+
+	void ImGui_ImplGlfwGL3_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		if (g_PrevUserCallbackKey != NULL)
+			g_PrevUserCallbackKey(window, key, scancode, action, mods);
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (action == GLFW_PRESS)
+			io.KeysDown[key] = true;
+		if (action == GLFW_RELEASE)
+			io.KeysDown[key] = false;
+
+		// Modifiers are not reliable across systems
+		io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+		io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+	}
+
+	void ImGui_ImplGlfwGL3_UpdateMousePosAndButtons()
+	{
+		// Update buttons
+		ImGuiIO& io = ImGui::GetIO();
+		for (int i = 0; i < IM_ARRAYSIZE(io.MouseDown); i++)
+		{
+			// If a mouse press event came, always pass it as "mouse held this frame", so we don't miss click-release events that are shorter than 1 frame.
+			io.MouseDown[i] = g_MouseJustPressed[i] || glfwGetMouseButton(g_Window, i) != 0;
+			g_MouseJustPressed[i] = false;
+		}
+
+		// Update mouse position
+		const ImVec2 mouse_pos_backup = io.MousePos;
+		io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+#ifdef __EMSCRIPTEN__
+		const bool focused = true; // Emscripten
+#else
+		const bool focused = glfwGetWindowAttrib(g_Window, GLFW_FOCUSED) != 0;
+#endif
+		if (focused)
+		{
+			if (io.WantSetMousePos)
+			{
+				glfwSetCursorPos(g_Window, (double)mouse_pos_backup.x, (double)mouse_pos_backup.y);
+			}
+			else
+			{
+				double mouse_x, mouse_y;
+				glfwGetCursorPos(g_Window, &mouse_x, &mouse_y);
+				io.MousePos = ImVec2((float)mouse_x, (float)mouse_y);
+			}
+		}
+	}
+
+	void ImGui_ImplGlfwGL3_UpdateMouseCursor()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		if ((io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange) || glfwGetInputMode(g_Window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+			return;
+
+		ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
+		if (imgui_cursor == ImGuiMouseCursor_None || io.MouseDrawCursor)
+		{
+			// Hide OS mouse cursor if imgui is drawing it or if it wants no cursor
+			glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		}
+		else
+		{
+			// Show OS mouse cursor
+			// FIXME-PLATFORM: Unfocused windows seems to fail changing the mouse cursor with GLFW 3.2, but 3.3 works here.
+			glfwSetCursor(g_Window, g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
+			glfwSetInputMode(g_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
 	}
 }

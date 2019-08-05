@@ -5,7 +5,8 @@ project(sandbox)
 add_executable(${PROJECT_NAME}  src/main.cpp
 								src/lightdemo.cpp
 								src/imguidemo.cpp
-								src/assimpdemo.cpp)
+								src/assimpdemo.cpp
+								src/assimplightsdemo.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/loki/vendor/GLFW/include/
 					${CMAKE_SOURCE_DIR}/loki/vendor/Glad/include/

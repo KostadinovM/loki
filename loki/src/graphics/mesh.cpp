@@ -44,12 +44,10 @@ namespace Loki
 					number = std::to_string(heightNr++); // transfer unsigned int to stream
 
 														 // now set the sampler to the correct texture unit
-				glUniform1i(glGetUniformLocation(shader.getID(), (name + number).c_str()), i);
+				glUniform1i(glGetUniformLocation(shader.getID(), ("material." + name + number).c_str()), i);
 				// and finally bind the texture
 				glBindTexture(GL_TEXTURE_2D, textures[i].getID());
 			}
-
-			//setupTexture();
 			glBindVertexArray(VAO);
 			glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 			glBindVertexArray(0);
@@ -87,15 +85,6 @@ namespace Loki
 
 		}
 
-		void Mesh::setupTexture()
-		{
-			if (textures.size() > 0)
-			{
-				for (unsigned int i = 0; i < textures.size(); i++)
-				{
-					textures[i].bind();
-				}
-			}
-		}
+		
 	}
 }

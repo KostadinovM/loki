@@ -4,22 +4,22 @@
 
 namespace Loki
 {
-		class Camera
-		{
-		private:
+	class Camera
+	{
+	private:
 
-		public:
-			glm::vec3 position = glm::vec3(0.0, 0.0f, 0.1f);
-			glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
-			glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-			glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
-			glm::vec3 worldUp;
+	public:
+		glm::vec3 position = glm::vec3(0.0, 0.0f, 0.1f);
+		glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f);
+		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
+		glm::vec3 worldUp;
 
-			glm::mat4 view;
+		glm::mat4 view;
 
-			Camera();
-			Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up);
-			void UpdateViewMatrix();
-			glm::mat4 getViewMatrix() const;
-		};
+		Camera();
+		Camera(glm::vec3 position, glm::vec3 forward, glm::vec3 up);
+		void UpdateViewMatrix();
+		glm::mat4 getViewMatrix() const;
+	};
 }

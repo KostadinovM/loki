@@ -2,8 +2,6 @@
 
 namespace Loki
 {
-	namespace Graphics
-	{
 		Cube::Cube()
 		{
 			positions = std::vector<glm::vec3>{
@@ -144,5 +142,4 @@ namespace Loki
 		{
 			draw(shader);
 		}
-	}
 }

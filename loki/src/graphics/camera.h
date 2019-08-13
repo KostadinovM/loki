@@ -4,8 +4,6 @@
 
 namespace Loki
 {
-	namespace Graphics
-	{
 		class Camera
 		{
 		private:
@@ -24,5 +22,4 @@ namespace Loki
 			void UpdateViewMatrix();
 			glm::mat4 getViewMatrix() const;
 		};
-	}
 }

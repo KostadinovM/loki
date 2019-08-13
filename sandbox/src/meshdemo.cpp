@@ -29,7 +29,7 @@ const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 900;
 
 // camera 
-Loki::Graphics::FreeCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Loki::FreeCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -79,10 +79,10 @@ int main()
 
 	// build and compile our shader program
 	// ------------------------------------
-	Loki::Graphics::Shader lightingShader(R"(C:\Users\Faust\Desktop\Engine\loki\resources\shaders\modellight_vs.glsl)",
+	Loki::Shader lightingShader(R"(C:\Users\Faust\Desktop\Engine\loki\resources\shaders\modellight_vs.glsl)",
 		R"(C:\Users\Faust\Desktop\Engine\loki\resources\shaders\modellight_fs.glsl)");
 
-	Loki::Graphics::Shader lampShader(R"(C:\Users\Faust\Desktop\Engine\loki\resources\shaders\lamp_vs.glsl)",
+	Loki::Shader lampShader(R"(C:\Users\Faust\Desktop\Engine\loki\resources\shaders\lamp_vs.glsl)",
 		R"(C:\Users\Faust\Desktop\Engine\loki\resources\shaders\lamp_fs.glsl)");
 
 	/*Loki::Graphics::Shader lampShader(R"(C:\Users\Faust\Desktop\Engine\loki\resources\shaders\lamp_vs.glsl)",
@@ -91,11 +91,11 @@ int main()
 
 		// set up vertex data (and buffer(s)) and configure vertex attributes
 	   // ------------------------------------------------------------------
-	Loki::Graphics::Cube cube;
+	Loki::Cube cube;
 	cube.disableTextures();
 	//Loki::Graphics::Scene scene;
 
-	Loki::Graphics::MeshLoader meshloader(R"(C:\Users\Faust\Desktop\Engine\loki\resources\models\nanosuit\nanosuit.obj)");
+	Loki::MeshLoader meshloader(R"(C:\Users\Faust\Desktop\Engine\loki\resources\models\nanosuit\nanosuit.obj)");
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	Loki::init(window, GLADloadproc(glfwGetProcAddress));
@@ -186,13 +186,13 @@ void processInput(GLFWwindow* window)
 		glfwSetWindowShouldClose(window, true);
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.InputKey(deltaTime, Loki::Graphics::CAMERA_MOVEMENT::FORWARD);
+		camera.InputKey(deltaTime, Loki::CAMERA_MOVEMENT::FORWARD);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.InputKey(deltaTime, Loki::Graphics::CAMERA_MOVEMENT::BACKWARD);
+		camera.InputKey(deltaTime, Loki::CAMERA_MOVEMENT::BACKWARD);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.InputKey(deltaTime, Loki::Graphics::CAMERA_MOVEMENT::LEFT);
+		camera.InputKey(deltaTime, Loki::CAMERA_MOVEMENT::LEFT);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.InputKey(deltaTime, Loki::Graphics::CAMERA_MOVEMENT::RIGHT);
+		camera.InputKey(deltaTime, Loki::CAMERA_MOVEMENT::RIGHT);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

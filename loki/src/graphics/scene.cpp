@@ -2,11 +2,8 @@
 
 namespace Loki
 {
-	namespace Graphics
+	Scene::Scene()
 	{
-		Scene::Scene()
-		{
 
-		}
 	}
 }

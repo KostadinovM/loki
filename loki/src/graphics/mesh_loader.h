@@ -9,28 +9,25 @@
 
 namespace Loki
 {
-	namespace Graphics
+	class MeshLoader
 	{
-		class MeshLoader
-		{
-		public:
-			MeshLoader();
-			MeshLoader(std::string path);
-			~MeshLoader();
-			void loadMesh(std::string path);
-			void draw(Shader shader);
+	public:
+		MeshLoader();
+		MeshLoader(std::string path);
+		~MeshLoader();
+		void loadMesh(std::string path);
+		void draw(Shader shader);
 
-		private:
-			std::vector<Mesh> meshStore;
-			std::vector<Texture> textureStore;
-			std::string directory;
-			GLuint texUnit;
+	private:
+		std::vector<Mesh> meshStore;
+		std::vector<Texture> textureStore;
+		std::string directory;
+		GLuint texUnit;
 
-			void processNode(aiNode* node, const aiScene* scene);
-			Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+		void processNode(aiNode* node, const aiScene* scene);
+		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
-			std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+		std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
-		};
-	}
+	};
 }

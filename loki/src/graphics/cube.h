@@ -4,13 +4,10 @@
 
 namespace Loki
 {
-	namespace Graphics
+	class Cube : public Mesh
 	{
-		class Cube : public Mesh
-		{
-		public:
-			Cube();
-			void drawCube(Shader);
-		};
-	}
+	public:
+		Cube();
+		void drawCube(Shader);
+	};
 }

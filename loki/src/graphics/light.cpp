@@ -1,7 +1,3 @@
 namespace Loki
 {
-	namespace Graphics
-	{
-
-	}
 }

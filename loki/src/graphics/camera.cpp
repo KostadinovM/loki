@@ -5,8 +5,6 @@
 
 namespace Loki
 {
-	namespace Graphics
-	{
 		Camera::Camera()
 		{
 		}
@@ -27,5 +25,4 @@ namespace Loki
 		{
 			return view;
 		}
-	}
 }

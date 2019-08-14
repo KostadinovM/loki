@@ -11,6 +11,11 @@ namespace Loki
 		glm::vec3 direction;
 		float intensity;
 
+		glm::vec3 position;
+		glm::vec3 ambient;
+		glm::vec3 difuse;
+		glm::vec3 specular;
+
 	public:
 		Light();
 		~Light();

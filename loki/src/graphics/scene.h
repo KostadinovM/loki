@@ -9,15 +9,14 @@ namespace Loki
 	class Scene 
 	{
 	public:
-		Scene();
-		~Scene();
-		void loadMesh(Scene& scene, std::string& filename);
-			
-
-	public:
 		MeshLoader meshloader;
 		std::vector<Mesh> meshes;
 		std::vector<FreeCamera> cameras;
-			
+		FreeCamera mainCamera;
+
+	public:
+		Scene();
+		~Scene();
+		void loadMeshes(std::string filename);
 	};
 }

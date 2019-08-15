@@ -59,10 +59,19 @@ namespace Loki
 	static GLFWkeyfun           g_PrevUserCallbackKey = NULL;
 	static GLFWcharfun          g_PrevUserCallbackChar = NULL;
 
+	Renderer* renderer;
 
-	void init(GLFWwindow* window, GLADloadproc loadProc)
+	Renderer* init(GLFWwindow* window, GLADloadproc loadProc)
 	{
+		if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
+		{
+			std::cout << "Failed to initialize GLAD" << std::endl;
+			return nullptr;
+		}
+
+		renderer = new Renderer();
 		ImGui_ImplGlfwGL3_Init(window, true);
+		return renderer;
 	}
 
 	void clean()

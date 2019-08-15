@@ -8,7 +8,7 @@ namespace Loki
 {
 	Renderer::Renderer()
 	{
-		
+		scene = nullptr;
 	}
 
 	Renderer::~Renderer()

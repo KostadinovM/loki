@@ -31,7 +31,7 @@ const unsigned int SCR_HEIGHT = 900;
 
 //setup
 Loki::Scene scene;
-Loki::Renderer renderer;
+Loki::Renderer* renderer;
 Loki::FreeCamera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 
@@ -73,25 +73,18 @@ int main()
 	glfwSetCursorPosCallback(window, cursor_position_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress)))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-
-	glEnable(GL_DEPTH_TEST);
-
-	Loki::Cube cube;
 	scene = Loki::Scene();
-	renderer = Loki::Renderer();
 	scene.mainCamera = camera;
+	renderer = Loki::init(window, GLADloadproc(glfwGetProcAddress));
 	scene.loadMeshes(R"(C:\Users\Faust\Desktop\Engine\loki\resources\models\nanosuit\nanosuit.obj)");
+	Loki::Cube cube;
 	cube.disableTextures();
 	scene.meshes.push_back(cube);
+	glEnable(GL_DEPTH_TEST);
+
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	renderer.Init(&scene);
-	renderer.Resize(800, 600);
-	Loki::init(window, GLADloadproc(glfwGetProcAddress));
+	renderer->Init(&scene);
+	renderer->Resize(800, 600);
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -112,7 +105,7 @@ int main()
 		// render
 		// ------
 		//scene.mainCamera.updateView();
-		renderer.Render();
+		renderer->Render();
 
 		Loki::renderGUI();
 		Loki::rendering();
@@ -151,7 +144,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
-	renderer.Resize(width, height);
+	renderer->Resize(width, height);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)

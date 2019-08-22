@@ -14,7 +14,7 @@ namespace Loki
 	};
 
 	//Derived from Camera class - to serve as a free mode camera
-	class FreeCamera : Camera
+	class FreeCamera : public Camera
 	{
 	public:
 

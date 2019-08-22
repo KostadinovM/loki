@@ -28,16 +28,41 @@ namespace Loki
 		const GLchar* vShaderCode = vertexShader.c_str();
 		const GLchar* fShaderCode = fragmentShader.c_str();
 
+		int status;
+		char log[1024];
+
 		glShaderSource(vs, 1, &vShaderCode, NULL);
 		glShaderSource(fs, 1, &fShaderCode, NULL);
 
 		glCompileShader(vs);
 		glCompileShader(fs);
 
+		glGetShaderiv(vs, GL_COMPILE_STATUS, &status);
+		if (!status)
+		{
+			glGetShaderInfoLog(vs, 1024, NULL, log);
+			std::cout << "Vertex shader compilation error at: " << vertexShader << std::endl;
+			std::cout << "Log: " << std::string(log) << std::endl;
+		}
+		glGetShaderiv(fs, GL_COMPILE_STATUS, &status);
+		if (!status)
+		{
+			glGetShaderInfoLog(vs, 1024, NULL, log);
+			std::cout << "Vertex shader compilation error at: " << vertexShader << std::endl;
+			std::cout << "Log: " << std::string(log) << std::endl;
+		}
+
 		glAttachShader(id, vs);
 		glAttachShader(id, fs);
 
 		glLinkProgram(id);
+
+		glGetProgramiv(id, GL_LINK_STATUS, &status);
+		if (!status)
+		{
+			glGetProgramInfoLog(id, 1024, NULL, log);
+			std::cout << "Log: " << std::string(log) << std::endl;
+		}
 
 		glDeleteShader(vs);
 		glDeleteShader(fs);
@@ -98,16 +123,62 @@ namespace Loki
 		return id;
 	}
 
-
-
-
-	std::string Shader::readShaderFile(std::string shaderPath)
+	std::string Shader::readShaderFile(std::string path, std::string includeIndentifier)
 	{
-		std::ifstream t(shaderPath);
-		std::stringstream buffer;
-		buffer << t.rdbuf();
-		std::string& shaderCode = buffer.str();
-		return shaderCode;
+		includeIndentifier += ' ';
+		static bool isRecursiveCall = false;
+
+		std::string fullSourceCode = "";
+		std::ifstream file(path);
+
+		if (!file.is_open())
+		{
+			std::cerr << "ERROR: could not open the shader at: " << path << "\n" << std::endl;
+			return fullSourceCode;
+		}
+
+		std::string lineBuffer;
+		while (std::getline(file, lineBuffer))
+		{
+			// Look for the new shader include identifier
+			if (lineBuffer.find(includeIndentifier) != lineBuffer.npos)
+			{
+				// Remove the include identifier, this will cause the path to remain
+				lineBuffer.erase(0, includeIndentifier.size());
+
+				// The include path is relative to the current shader file path
+				std::string pathOfThisFile;
+				getFilePath(path, pathOfThisFile);
+				lineBuffer.insert(0, pathOfThisFile);
+
+				// By using recursion, the new include file can be extracted
+				// and inserted at this location in the shader source code
+				isRecursiveCall = true;
+				fullSourceCode += readShaderFile(lineBuffer);
+
+				// Do not add this line to the shader source code, as the include
+				// path would generate a compilation issue in the final source code
+				continue;
+			}
+
+			fullSourceCode += lineBuffer + '\n';
+		}
+
+		// Only add the null terminator at the end of the complete file,
+		// essentially skipping recursive function calls this way
+		if (!isRecursiveCall)
+			fullSourceCode += '\0';
+
+		file.close();
+
+		return fullSourceCode;
+	}
+
+	void Shader::getFilePath(const std::string& fullPath, std::string& pathWithoutFileName)
+	{
+		// Remove the file name and store the path to this folder
+		size_t found = fullPath.find_last_of("/\\");
+		pathWithoutFileName = fullPath.substr(0, found + 1);
 	}
 }
 

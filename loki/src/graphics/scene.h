@@ -3,6 +3,9 @@
 #include "camera.h"
 #include "free_camera.h"
 #include <string>
+#include "point_light.h"
+#include "spot_light.h"
+#include "directional_light.h"
 
 namespace Loki
 {
@@ -13,6 +16,10 @@ namespace Loki
 		std::vector<Mesh> meshes;
 		std::vector<FreeCamera> cameras;
 		FreeCamera mainCamera;
+		std::vector<PointLight> pointLights;
+		std::vector<DirectionalLight> directionalLights;
+		std::vector<SpotLight> spotlights;
+
 
 	public:
 		Scene();

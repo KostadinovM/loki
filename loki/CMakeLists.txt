@@ -27,7 +27,7 @@ include_directories(vendor/GLFW/include/
 file(GLOB_RECURSE _source_list src/*.cpp
 							   src/*.h
 							   src/*.glsl
-							   src/*.glsl
+							   src/*.hlsl
 							   vendor/imgui/*.cpp
 							   vendor/imgui/*.h
 							   vendor/glad/*.c

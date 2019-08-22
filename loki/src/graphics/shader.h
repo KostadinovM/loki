@@ -7,6 +7,9 @@
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
+#include <string>
+#include <fstream>
+#include <iostream>
 
 namespace Loki
 {
@@ -16,7 +19,8 @@ namespace Loki
 		unsigned int id;
 
 	private:		
-		std::string readShaderFile(std::string shaderPath);
+		std::string readShaderFile(std::string path, std::string includeIndentifier = "#include");
+		void getFilePath(const std::string& fullPath, std::string& pathWithoutFileName);
 
 	public:
 		Shader();
@@ -36,6 +40,5 @@ namespace Loki
 		void setMatrix(const std::string& name, glm::mat4& mat) const;
 
 		unsigned int getID();
-
 	};
 }

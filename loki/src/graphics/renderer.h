@@ -15,9 +15,13 @@ namespace Loki
 		void Render();
 
 	public:
+		unsigned int globalUBO;
+
 		//config
-		bool lights;
-		bool shadows;
+		bool lights = true;
+		bool shadows = false;
+		bool stencilTest = false;
+		bool blending = false;
 
 		Scene* scene;
 		int windowWidth;
@@ -25,5 +29,10 @@ namespace Loki
 		std::vector<Shader> shaders;
 		Shader sceneSP;
 		Shader meshSP;
+
+	private:
+		void renderDirLights();
+		void renderPointLights();
+		void renderSpotLights();
 	};
 }

@@ -90,10 +90,11 @@ namespace Loki
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		if (ImGui::CollapsingHeader("General Options"))
 		{
-			ImGui::Checkbox("Shadows", &g_MouseJustPressed[1]);
-			ImGui::Checkbox("Lights", &g_MouseJustPressed[1]);
-			ImGui::Checkbox("Stencil Testing", &g_MouseJustPressed[1]);
-			ImGui::Checkbox("Blending", &g_MouseJustPressed[1]);
+			
+			ImGui::Checkbox("Shadows", &renderer->shadows);
+			ImGui::Checkbox("Lights", &renderer->lights);
+			ImGui::Checkbox("Stencil Testing", &renderer->stencilTest);
+			ImGui::Checkbox("Blending", &renderer->blending);
 		}
 		if (ImGui::CollapsingHeader("Advanced Options"))
 		{

@@ -38,8 +38,8 @@ namespace Loki
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		FreeCamera maincamera = scene->mainCamera;
 		maincamera.updateView();
-		glm::mat4 projection = glm::perspective(glm::radians(maincamera.zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
-		glm::mat4 view = maincamera.getViewMatrix();
+		projection = glm::perspective(glm::radians(maincamera.zoom), (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+		view = maincamera.getViewMatrix();
 
 		sceneSP.use();
 		sceneSP.setVector("viewPos", maincamera.getCameraPos());
@@ -62,10 +62,9 @@ namespace Loki
 		sceneSP.setMatrix("projection", projection);
 		sceneSP.setMatrix("view", view);
 
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-		//model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f)); // for nanosuit
-		model = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));	// for sponza
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(locationX, locationY, locationZ)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(scaler, scaler, scaler));	
 		sceneSP.setMatrix("model", model);
 		scene->meshloader.draw(sceneSP);
 

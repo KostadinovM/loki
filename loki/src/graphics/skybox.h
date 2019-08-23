@@ -1,0 +1,8 @@
+
+namespace Loki
+{
+	class Skybox
+	{
+
+	};
+}

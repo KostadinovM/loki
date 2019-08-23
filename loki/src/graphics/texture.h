@@ -6,7 +6,7 @@ namespace Loki
 {
 	class Texture
 	{
-	private:
+	public:
 		GLuint id;
 		int width;
 		int height;
@@ -15,9 +15,9 @@ namespace Loki
 		std::string name;
 		std::string path;
 		GLenum type;
-		GLint textureUnit;
-		GLuint wrap;
-		GLuint filter;
+		GLenum textureUnit;
+		GLenum wrap;
+		GLenum filter;
 			
 
 	public:

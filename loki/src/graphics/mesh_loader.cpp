@@ -162,14 +162,12 @@ namespace Loki
 			}
 			if (!skip)
 			{
-				//Texture texture = loadTexture(str.C_Str(), this->directory);
 				std::string filename = std::string(str.C_Str());
 				std::string found = filename.substr(0, filename.find_last_of('\\'));
 				std::size_t index = found.find_last_of("/");
 				std::string name = found.substr(index + 1);
 				
-				filename = directory + R"(\)" + name; //for sponza
-				//filename = directory + R"(\)" + filename; //for nanosuit
+				filename = directory + R"(\)" + name; 
 				Texture texture(filename, GL_TEXTURE_2D, texUnit, GL_REPEAT, GL_LINEAR);
 				texUnit++;
 				texture.setName(typeName);

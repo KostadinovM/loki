@@ -51,7 +51,7 @@ namespace Loki
 			else if (nrChannels == 4)
 				format = GL_RGBA;
 
-			glBindTexture(texType, id);
+			bind();
 			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 			glGenerateMipmap(texType);
 

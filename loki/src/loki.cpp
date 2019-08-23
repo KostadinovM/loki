@@ -88,6 +88,7 @@ namespace Loki
 	{
 		ImGui::Begin("Loki Engine");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		static float sliderfloat = 0.0;
 		if (ImGui::CollapsingHeader("General Options"))
 		{
 			
@@ -98,10 +99,16 @@ namespace Loki
 		}
 		if (ImGui::CollapsingHeader("Advanced Options"))
 		{
-			ImGui::Checkbox("Bloom", &g_MouseJustPressed[1]);
-			ImGui::Checkbox("Anti-aliasing", &g_MouseJustPressed[1]);
-			ImGui::Checkbox("SSAO", &g_MouseJustPressed[1]);
+			ImGui::Checkbox("Bloom", &renderer->bloom);
+			ImGui::Checkbox("Anti-aliasing", &renderer->aaliasing);
+			ImGui::Checkbox("SSAO", &renderer->ssao);
 		}
+		ImGui::SliderFloat("Scale model", &renderer->scaler, 0.0, 1.0);
+
+		ImGui::Text("Model location:");
+		ImGui::SliderFloat("x axis", &renderer->locationX, -100.0, 100.0);
+		ImGui::SliderFloat("y axis", &renderer->locationY, -100.0, 100.0);
+		ImGui::SliderFloat("z axis", &renderer->locationZ, -100.0, 100.0);
 
 		ImGui::End();
 		ImGui::Render();

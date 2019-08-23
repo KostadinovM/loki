@@ -9,7 +9,8 @@ add_executable(${PROJECT_NAME}  src/main.cpp
 								src/assimplightsdemo.cpp
 								src/meshdemo.cpp
 								src/architecturedemo.cpp
-								src/multiplelights.cpp)
+								src/multiplelights.cpp
+								src/skyboxdemo.cpp)
 
 include_directories(${CMAKE_SOURCE_DIR}/loki/vendor/GLFW/include/
 					${CMAKE_SOURCE_DIR}/loki/vendor/Glad/include/

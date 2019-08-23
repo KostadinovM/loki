@@ -6,6 +6,7 @@
 #include "point_light.h"
 #include "spot_light.h"
 #include "directional_light.h"
+#include "skybox.h"
 
 namespace Loki
 {
@@ -19,6 +20,7 @@ namespace Loki
 		std::vector<PointLight> pointLights;
 		std::vector<DirectionalLight> directionalLights;
 		std::vector<SpotLight> spotlights;
+		Skybox skybox;
 
 
 	public:

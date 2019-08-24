@@ -1,6 +1,6 @@
 # Loki - OpenGL Rendering Engine
 
-## What is this project about:
+## What is this project about?
 This is a personal project. My goals for this project were:
 * Improving my mathematics skills
 * Improving my C++ skills

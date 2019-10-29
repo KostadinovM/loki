@@ -21,4 +21,4 @@ This is a personal project. My goals for this project were:
 * Build the submodules by running the **GenerateProjects.bat** batch script in the repo
 
 ## Showcase
-![alt text](https://resizeimage.net/mypic/qoyFVGo2gDUWFnkh/GehF8/loki.png)
+![alt text](https://raw.githubusercontent.com/KostadinovM/loki/master/loki.png)

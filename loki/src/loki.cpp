@@ -92,10 +92,10 @@ namespace Loki
 		if (ImGui::CollapsingHeader("General Options"))
 		{
 			
-			ImGui::Checkbox("Shadows", &renderer->shadows);
+			//ImGui::Checkbox("Shadows", &renderer->shadows);
 			ImGui::Checkbox("Lights", &renderer->lights);
-			ImGui::Checkbox("Stencil Testing", &renderer->stencilTest);
-			ImGui::Checkbox("Blending", &renderer->blending);
+			//ImGui::Checkbox("Stencil Testing", &renderer->stencilTest);
+			//ImGui::Checkbox("Blending", &renderer->blending);
 		}
 		if (ImGui::CollapsingHeader("Advanced Options"))
 		{

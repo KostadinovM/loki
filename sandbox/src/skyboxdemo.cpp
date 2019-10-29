@@ -149,8 +149,8 @@ int main()
 
 	scene.mainCamera = camera;
 	renderer = Loki::init(window, GLADloadproc(glfwGetProcAddress));
-	scene.loadMeshes(R"(C:\Users\Faust\Desktop\Engine\loki\resources\models\nanosuit\nanosuit.obj)");
-	//scene.loadMeshes(R"(C:\Users\Faust\Desktop\Engine\loki\resources\models\sponza\sponza.obj)");
+	//scene.loadMeshes(R"(C:\Users\Faust\Desktop\Engine\loki\resources\models\nanosuit\nanosuit.obj)");
+	scene.loadMeshes(R"(C:\Users\Faust\Desktop\Engine\loki\resources\models\sponza\sponza.obj)");
 	Loki::Cube cube1;
 	Loki::Cube cube2;
 	Loki::Cube cube3;
